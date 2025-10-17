@@ -1,4 +1,6 @@
 import {useEffect, useState} from 'react'
+
+import {useDebounce} from "react-use";
 import './App.css'
 import Search from "./Components/SearchBar.jsx";
 import Loader from "./Components/Loader.jsx";
@@ -27,6 +29,11 @@ function App() {
     const[isLoading, setIsLoading] = useState(false);
 
     const[movieList, setMovieList] = useState([]);
+
+    const[debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
+    // Debounce the search term to prevent making too many API requests
+    useDebounce(() => setDebouncedSearchTerm(searchTerm), 500,[searchTerm]);
 
     const fetchMovies = async (query = '') => {
         setIsLoading(true);
@@ -59,8 +66,8 @@ function App() {
     }
 
     useEffect(()=>{
-        fetchMovies(searchTerm);
-    },[searchTerm]);
+        fetchMovies(debouncedSearchTerm);
+    },[debouncedSearchTerm]);
 
   return (
     <main>
